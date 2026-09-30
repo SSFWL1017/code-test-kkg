@@ -23,8 +23,7 @@ jobs:
         run: pip install pytest
 
       - name: Run ruff
-        run: echo (pwd)
-          python3 -m ruff check src
+        run: python3 -m ruff check src
 
       - name: Run pytest
         run: python3 -m pytest tests
