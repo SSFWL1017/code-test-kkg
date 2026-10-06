@@ -2,9 +2,11 @@ name: Daily Lint and Pytest
 
 on:
   schedule:
-    # 매일 18:30 KST = 00:00 UTC
-    - cron: '30 21 * * *'
+    # 매일 18:30 KST
+    - cron: '30 18 * * *'
       timezone: 'Asia/Seoul'
+
+  workflow_dispatch:
 
 jobs:
   test:
