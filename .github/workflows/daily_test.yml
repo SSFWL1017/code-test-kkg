@@ -3,7 +3,7 @@ name: Daily Lint and Pytest
 on:
   schedule:
     # 매일 18:30 KST = 00:00 UTC
-    - cron: '30 17 * * *'
+    - cron: '30 14 * * *'
       timezone: 'Asia/Seoul'
 
 jobs:
