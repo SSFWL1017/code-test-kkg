@@ -1,3 +1,3 @@
-from .calculator import add, subtract
+from .calculator import multiply, modulo
 
 __all__ = ["add", "subtract"]
