@@ -3,7 +3,7 @@ requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kopo-calc-cloudcomputing"
+name = "kopo-calc-chunjihu2"
 version = "0.2.0"
 description = "A simple calculator for Python packaging lab"
 readme = "README.md"
