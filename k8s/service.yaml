@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: mymoney
   namespace: default
+  annotations:
+   gitops-test: "success"
 spec:
   type: NodePort
   selector:
