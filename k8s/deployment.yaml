@@ -1,0 +1,38 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mymoney
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mymoney
+  template:
+    metadata:
+      labels:
+        app: mymoney
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-control-01
+
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+
+      containers:
+
+        - name: mymoney
+          image: ssfwl1017/mymoney:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: mymoney-storage
+              mountPath: /data
+      volumes:
+        - name: mymoney-storage
+          persistentVolumeClaim:
+            claimName: mymoney-pvc
