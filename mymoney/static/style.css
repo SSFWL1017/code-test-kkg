@@ -1,0 +1,87 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #f4f6fb;
+    color: #20283b;
+    font-family: Arial, "Noto Sans KR", sans-serif;
+}
+
+.container {
+    max-width: 1050px;
+    margin: 50px auto;
+    padding: 0 22px;
+}
+
+header { margin-bottom: 30px; }
+.eyebrow { color: #6179d8; font-size: 12px; letter-spacing: 2px; font-weight: bold; }
+h1 { font-size: 38px; margin: 5px 0; }
+.subtitle { color: #7b8497; }
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.card, .panel {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 5px 20px rgba(30, 50, 90, .04);
+}
+
+.card p { color: #8490a3; margin: 0; }
+.card h2 { margin-bottom: 0; font-size: 25px; }
+.balance { background: #536fe0; color: white; }
+.balance p { color: #e2e8ff; }
+.income { color: #16a36a; }
+.expense { color: #e16c72; }
+
+.panel { margin-bottom: 22px; }
+.panel h2 { font-size: 19px; margin-top: 0; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+input, select, button {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #e2e6ef;
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+button {
+    border: 0;
+    background: #536fe0;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 17px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.transaction p { color: #8a94a6; font-size: 13px; margin-bottom: 0; }
+.transaction-right { display: flex; align-items: center; gap: 15px; }
+.transaction-right .income { color: #16a36a; }
+.transaction-right .expense { color: #e16c72; }
+.delete { padding: 7px 12px; background: #f0f2f7; color: #697386; }
+.empty { text-align: center; padding: 25px; color: #929bad; }
+footer { text-align: center; color: #9ba3b2; padding: 20px; }
+
+@media (max-width: 700px) {
+    .summary { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .transaction { gap: 10px; }
+}

@@ -1,0 +1,5 @@
+venv/
+__pycache__/
+*.pyc
+mymoney.db
+.git/

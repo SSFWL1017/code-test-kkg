@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMoney - 나의 가계부</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <div>
+                <p class="eyebrow">PERSONAL FINANCE</p>
+                <h1>MyMoney</h1>
+                <p class="subtitle">나의 수입과 지출을 한눈에 관리하세요.</p>
+            </div>
+        </header>
+
+        <section class="summary">
+            <article class="card balance">
+                <p>총 잔액</p>
+                <h2>{{ "{:,}".format(balance) }}원</h2>
+            </article>
+            <article class="card">
+                <p>총 수입</p>
+                <h2 class="income">+{{ "{:,}".format(income) }}원</h2>
+            </article>
+            <article class="card">
+                <p>총 지출</p>
+                <h2 class="expense">-{{ "{:,}".format(expense) }}원</h2>
+            </article>
+        </section>
+
+        <section class="panel">
+            <h2>내역 추가</h2>
+            <form action="/add" method="POST" class="form-grid">
+                <input name="title" placeholder="내용 (예: 점심 식사)" required>
+                <input name="amount" type="number" min="1" placeholder="금액" required>
+                <select name="category" required>
+                    <option value="">카테고리 선택</option>
+                    <option>식비</option>
+                    <option>교통비</option>
+                    <option>쇼핑</option>
+                    <option>월급</option>
+                    <option>용돈</option>
+                    <option>기타</option>
+                </select>
+                <select name="kind" required>
+                    <option value="expense">지출</option>
+                    <option value="income">수입</option>
+                </select>
+                <input name="date" type="date" required>
+                <button type="submit">내역 등록</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>거래 내역</h2>
+            {% if transactions %}
+            <div class="transaction-list">
+                {% for item in transactions %}
+                <div class="transaction">
+                    <div>
+                        <strong>{{ item["title"] }}</strong>
+                        <p>{{ item["date"] }} · {{ item["category"] }}</p>
+                    </div>
+                    <div class="transaction-right">
+                        <strong class="{{ item['kind'] }}">
+                            {% if item["kind"] == "income" %}+{% else %}-{% endif %}
+                            {{ "{:,}".format(item["amount"]) }}원
+                        </strong>
+                        <form action="/delete/{{ item['id'] }}" method="POST">
+                            <button class="delete" type="submit">삭제</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty">아직 등록된 내역이 없습니다.</p>
+            {% endif %}
+        </section>
+        <footer>MyMoney · Personal Finance Dashboard</footer>
+    </main>
+</body>
+</html>
