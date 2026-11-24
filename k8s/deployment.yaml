@@ -25,7 +25,7 @@ spec:
       containers:
 
         - name: mymoney
-          image: ssfwl1017/mymoney:48b984bc169c94480b4bd7f0d76096c6458bc355
+          image: ssfwl1017/mymoney:34be003c691ea9f7b5c1392a515b940cb4b51a3a
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
