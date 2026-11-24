@@ -1,43 +1,96 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyMoney - 나의 가계부</title>
+    <title>MyMoney | Finance Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <main class="container">
-        <header>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">◈ MyMoney</div>
+        <p class="menu-title">MENU</p>
+        <a class="menu active" href="/">▦ &nbsp; 대시보드</a>
+        <a class="menu" href="#transactions">↔ &nbsp; 거래 내역</a>
+        <a class="menu" href="#add-transaction">＋ &nbsp; 내역 추가</a>
+        <div class="sidebar-bottom">
+            <div class="profile">👤 &nbsp; My Account</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
             <div>
-                <p class="eyebrow">PERSONAL FINANCE</p>
-                <h1>MyMoney</h1>
-                <p class="subtitle">argocd automatic test나의 수입과 지출을 한눈에 관리하세요.</p>
+                <h1>대시보드</h1>
+                <p>나의 금융 현황을 한눈에 확인하세요.</p>
             </div>
+            <a class="add-button" href="#add-transaction">＋ 내역 추가</a>
         </header>
 
         <section class="summary">
-            <article class="card balance">
-                <p>총 잔액</p>
+            <article class="stat-card balance-card">
+                <div class="stat-label">총 잔액 <span>₩</span></div>
                 <h2>{{ "{:,}".format(balance) }}원</h2>
+                <p>현재 보유 잔액</p>
             </article>
-            <article class="card">
-                <p>총 수입</p>
-                <h2 class="income">+{{ "{:,}".format(income) }}원</h2>
+            <article class="stat-card">
+                <div class="stat-label">총 수입 <span class="icon-income">↗</span></div>
+                <h2>{{ "{:,}".format(income) }}원</h2>
+                <p class="income">전체 수입 누계</p>
             </article>
-            <article class="card">
-                <p>총 지출</p>
-                <h2 class="expense">-{{ "{:,}".format(expense) }}원</h2>
+            <article class="stat-card">
+                <div class="stat-label">총 지출 <span class="icon-expense">↘</span></div>
+                <h2>{{ "{:,}".format(expense) }}원</h2>
+                <p class="expense">전체 지출 누계</p>
             </article>
         </section>
 
-        <section class="panel">
-            <h2>내역 추가</h2>
+        <section class="chart-grid">
+            <article class="panel chart-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>수입 및 지출 분석</h3>
+                        <p>최근 7개월 금융 흐름</p>
+                    </div>
+                    <span class="period">최근 7개월</span>
+                </div>
+                <div class="chart-area">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </article>
+
+            <article class="panel chart-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>자금 현황</h3>
+                        <p>전체 수입과 지출 비율</p>
+                    </div>
+                </div>
+                <div class="donut-area">
+                    <canvas id="flowChart"></canvas>
+                </div>
+                <div class="legend">
+                    <span><i class="dot green"></i> 수입</span>
+                    <span><i class="dot red"></i> 지출</span>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel form-panel" id="add-transaction">
+            <div class="panel-heading">
+                <div>
+                    <h3>새 거래 등록</h3>
+                    <p>수입 또는 지출 내역을 추가하세요.</p>
+                </div>
+            </div>
             <form action="/add" method="POST" class="form-grid">
-                <input name="title" placeholder="내용 (예: 점심 식사)" required>
-                <input name="amount" type="number" min="1" placeholder="금액" required>
+                <input name="title" placeholder="거래 내용" required>
+                <input name="amount" type="number" min="1" placeholder="금액 (원)" required>
                 <select name="category" required>
-                    <option value="">카테고리 선택</option>
+                    <option value="">카테고리</option>
                     <option>식비</option>
                     <option>교통비</option>
                     <option>쇼핑</option>
@@ -50,37 +103,72 @@
                     <option value="income">수입</option>
                 </select>
                 <input name="date" type="date" required>
-                <button type="submit">내역 등록</button>
+                <button type="submit">내역 등록하기</button>
             </form>
         </section>
 
-        <section class="panel">
-            <h2>거래 내역</h2>
-            {% if transactions %}
-            <div class="transaction-list">
-                {% for item in transactions %}
-                <div class="transaction">
-                    <div>
-                        <strong>{{ item["title"] }}</strong>
-                        <p>{{ item["date"] }} · {{ item["category"] }}</p>
-                    </div>
-                    <div class="transaction-right">
-                        <strong class="{{ item['kind'] }}">
-                            {% if item["kind"] == "income" %}+{% else %}-{% endif %}
-                            {{ "{:,}".format(item["amount"]) }}원
-                        </strong>
-                        <form action="/delete/{{ item['id'] }}" method="POST">
-                            <button class="delete" type="submit">삭제</button>
-                        </form>
-                    </div>
+        <section class="panel transactions-panel" id="transactions">
+            <div class="panel-heading">
+                <div>
+                    <h3>최근 거래 내역</h3>
+                    <p>등록된 수입과 지출 기록</p>
                 </div>
-                {% endfor %}
+                <span class="count">{{ transactions|length }}건</span>
             </div>
-            {% else %}
-            <p class="empty">아직 등록된 내역이 없습니다.</p>
-            {% endif %}
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>거래 내용</th>
+                            <th>카테고리</th>
+                            <th>날짜</th>
+                            <th>유형</th>
+                            <th>금액</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in transactions %}
+                        <tr>
+                            <td class="transaction-title">{{ item["title"] }}</td>
+                            <td>{{ item["category"] }}</td>
+                            <td>{{ item["date"] }}</td>
+                            <td>
+                                <span class="type-badge {{ item['kind'] }}">
+                                    {{ "수입" if item["kind"] == "income" else "지출" }}
+                                </span>
+                            </td>
+                            <td class="amount {{ item['kind'] }}">
+                                {{ "+" if item["kind"] == "income" else "-" }}{{ "{:,}".format(item["amount"]) }}원
+                            </td>
+                            <td>
+                                <form action="/delete/{{ item['id'] }}" method="POST">
+                                    <button class="delete-button" type="submit">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="empty">아직 등록된 거래 내역이 없습니다.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
+
         <footer>MyMoney · Personal Finance Dashboard</footer>
     </main>
+</div>
+
+<script>
+    const chartLabels = {{ chart_labels | tojson }};
+    const chartIncome = {{ chart_income | tojson }};
+    const chartExpense = {{ chart_expense | tojson }};
+    const totalIncome = {{ income | tojson }};
+    const totalExpense = {{ expense | tojson }};
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
